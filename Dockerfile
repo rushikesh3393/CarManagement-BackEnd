@@ -1,11 +1,21 @@
-# Use a base image with Java installed
-FROM openjdk:17-jdk-slim
+# --------- Build Stage ---------
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the JAR file built from your project into the container
-COPY target/CarGarageManagementSystem-0.0.1-SNAPSHOT.jar app.jar
+# Copy the entire project
+COPY . .
 
-# Command to run the JAR
+# Build the Spring Boot project (skip tests if needed)
+RUN mvn clean package -DskipTests
+
+# --------- Run Stage ---------
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copy the generated JAR from the build stage
+COPY --from=build /app/target/CarGarageManagementSystem-0.0.1-SNAPSHOT.jar app.jar
+
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
