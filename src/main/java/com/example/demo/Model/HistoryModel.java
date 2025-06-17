@@ -17,6 +17,7 @@ public class HistoryModel
 	private int spareqty;
 	private int spareamt;
 	private int TotalAmount;
+
 	
 
 }
